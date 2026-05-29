@@ -1,0 +1,164 @@
+const express = require('express');
+const cors = require('cors');
+const { Pool } = require('pg');
+const axios = require('axios'); // Thêm thư viện axios để gọi API Telegram
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Kết nối PostgreSQL 
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'Fixit Now',
+    password: '230704',
+    port: 5432,
+});
+
+// 1. Lấy danh sách dịch vụ
+app.get('/api/services', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM services');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. Tạo Đơn Hàng (Đã thêm tính năng báo về Telegram)
+app.post('/api/orders', async (req, res) => {
+    const { userId, serviceId, location, userName } = req.body;
+
+    try {
+        const orderResult = await pool.query(
+            'INSERT INTO orders (user_id, service_id, location) VALUES ($1, $2, $3) RETURNING id, created_at',
+            [userId, serviceId, location]
+        );
+        const newOrder = orderResult.rows[0];
+
+        const serviceResult = await pool.query('SELECT name, price FROM services WHERE id = $1', [serviceId]);
+        const service = serviceResult.rows[0];
+
+        const orderDate = new Date(newOrder.created_at || new Date()).toLocaleString('vi-VN');
+
+        // ==========================================
+        // CẤU HÌNH THÔNG BÁO TELEGRAM CỦA KHÔI
+        // ==========================================
+        const teleToken = '8716729980:AAGFlCDvXlfj6fimgf4JBlaS-I7cqOqlufQ'; // Điền Token của Bot vào đây
+        const chatId = '6421326023';     // Điền Chat ID của bạn vào đây
+        
+        // Nội dung tin nhắn
+        const teleMessage = `
+🚨 **CÓ ĐƠN HÀNG MỚI!**
+-----------------------------
+👤 **Khách hàng:** ${userName || 'Khách (Chưa có tên)'}
+🛠 **Dịch vụ:** ${service.name}
+📍 **Địa chỉ:** ${location}
+💰 **Giá dự kiến:** ${service.price}
+⏰ **Thời gian:** ${orderDate}
+🆔 **Mã đơn:** FIXIT${newOrder.id}
+-----------------------------
+👉 *Khôi hãy check đơn và điều phối thợ nhé!*
+        `;
+
+        // Lệnh gửi tin nhắn qua Telegram API (chạy ngầm, không ảnh hưởng đến tốc độ của app)
+        if (teleToken !== 'YOUR_BOT_TOKEN_HERE' && chatId !== 'YOUR_CHAT_ID_HERE') {
+            axios.post(`https://api.telegram.org/bot${teleToken}/sendMessage`, {
+                chat_id: chatId,
+                text: teleMessage,
+                parse_mode: 'Markdown'
+            }).catch(err => console.error("Lỗi gửi Telegram:", err.message));
+        }
+        // ==========================================
+
+        res.json({ 
+            success: true, 
+            order: {
+                id: `FIXIT${newOrder.id}FPT`, 
+                rawId: newOrder.id,
+                serviceName: service.name,
+                price: service.price,
+                location: location,
+                date: orderDate
+            }
+        });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 3. API Đăng ký tài khoản
+app.post('/api/register', async (req, res) => {
+    const { phone, fullName, password } = req.body;
+    try {
+        const result = await pool.query(
+            'INSERT INTO users (phone, full_name, password) VALUES ($1, $2, $3) RETURNING id, full_name, phone',
+            [phone, fullName, password]
+        );
+        res.json({ success: true, message: "Đăng ký thành công!", user: result.rows[0] });
+    } catch (err) {
+        res.json({ success: false, error: "Tài khoản này đã được đăng ký hoặc lỗi hệ thống!" });
+    }
+});
+
+// 4. API Đăng nhập 
+app.post('/api/login', async (req, res) => {
+    const { phone, password } = req.body;
+    try {
+        const result = await pool.query(
+            'SELECT id, full_name, phone, is_tech FROM users WHERE phone = $1 AND password = $2',
+            [phone, password]
+        );
+        if (result.rows.length > 0) {
+            res.json({ success: true, message: "Đăng nhập thành công!", user: result.rows[0] });
+        } else {
+            res.json({ success: false, error: "Sai thông tin đăng nhập!" });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// 5. API Lấy lịch sử đơn hàng của 1 User
+app.get('/api/orders/history/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const result = await pool.query(`
+            SELECT o.id, o.location, o.created_at, s.name as service_name, s.price, s.icon
+            FROM orders o
+            JOIN services s ON o.service_id = s.id
+            WHERE o.user_id = $1
+            ORDER BY o.created_at DESC
+        `, [userId]);
+        
+        res.json({ success: true, orders: result.rows });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// 6. API Nộp hồ sơ đăng ký làm thợ
+app.post('/api/tech-register', async (req, res) => {
+    const { userId, phone, location, skills } = req.body; 
+    
+    try {
+        const checkExist = await pool.query('SELECT * FROM tech_applications WHERE user_id = $1', [userId]);
+        if (checkExist.rows.length > 0) {
+            return res.json({ success: false, error: "Bạn đã nộp hồ sơ rồi, vui lòng chờ Admin duyệt nhé!" });
+        }
+
+        await pool.query(
+            'INSERT INTO tech_applications (user_id, phone, location, skills) VALUES ($1, $2, $3, $4)',
+            [userId, phone, location, skills]
+        );
+        res.json({ success: true, message: "Hồ sơ của bạn đã được gửi thành công!" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+app.listen(3000, () => {
+    console.log('🚀 Server FixIt Now đang chạy tại http://localhost:3000');
+});

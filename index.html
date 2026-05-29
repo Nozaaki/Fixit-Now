@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FixIt Now - FPT Hòa Lạc</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-active { overflow: hidden; }
+        .table-container { overflow-x: auto; }
+        .gradient-text { background: linear-gradient(to right, #2563eb, #7c3aed); -webkit-background-clip: text; color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-gray-800 pb-24 md:pb-0">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="returnToHome()">
+                    <i class="fa-solid fa-screwdriver-wrench text-2xl md:text-3xl text-blue-600"></i>
+                    <span class="font-black text-xl md:text-2xl text-blue-700 tracking-tight">FixIt Now</span>
+                </div>
+                
+                <div class="flex items-center gap-3 md:gap-4">
+                    <button onclick="openHistoryModal()" class="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition">Đơn hàng</button>
+                    <button id="btn-tech-pc" onclick="openTechModal()" class="hidden md:block text-sm font-semibold text-gray-600 hover:text-blue-600 transition">Trở thành Thợ</button>
+                    
+                    <button onclick="startBookingFlow()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 md:px-6 py-2 rounded-full text-sm font-bold shadow-md transition flex items-center gap-2 transform hover:scale-105 animate-pulse">
+                        <i class="fa-solid fa-bolt"></i> Đặt Thợ Ngay
+                    </button>
+
+                    <button id="login-btn" onclick="openAuthModal()" class="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-4 md:px-6 py-1.5 rounded-full text-sm font-semibold transition flex items-center gap-2">
+                        <i class="fa-solid fa-user"></i> <span class="hidden md:inline">Đăng nhập</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="landing-content" class="block">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8">
+            <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 rounded-3xl p-8 md:p-14 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl relative overflow-hidden">
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-bold tracking-wider uppercase mb-4 inline-block backdrop-blur-sm border border-white/30">Thông tin liên hệ:0987654321</span>
+                    <h1 class="text-3xl md:text-5xl font-black mb-4 leading-tight">Gọi thợ sửa chữa<br><span class="text-yellow-400">chỉ trong 15 phút!</span></h1>
+                    <p class="text-blue-100 text-lg mb-8 font-medium">Bạn đang ở Dom, chập điện hay hỏng vòi nước? Chỉ cần nhập địa chỉ, chúng tôi sẽ điều phối thợ uy tín nhất đến ngay lập tức.</p>
+                    <button onclick="startBookingFlow()" class="bg-white text-blue-700 hover:bg-gray-100 px-8 py-4 rounded-full font-extrabold text-lg shadow-xl transition-all hover:-translate-y-1 flex items-center gap-2">
+                        <i class="fa-solid fa-location-crosshairs"></i> Nhập địa chỉ của bạn
+                    </button>
+                </div>
+                <i class="fa-solid fa-house-chimney-crack text-[150px] text-white/10 absolute right-10 bottom-0 md:relative md:text-white/20 transform rotate-12"></i>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+            <h2 class="text-2xl md:text-3xl font-black text-center mb-10"><span class="text-blue-600">Quyền lợi tuyệt vời</span> dành cho bạn</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center group">
+                    <div class="w-16 h-16 mx-auto bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors"><i class="fa-solid fa-stopwatch"></i></div>
+                    <h3 class="font-bold text-gray-800 mb-2">Siêu tốc 15 phút</h3>
+                    <p class="text-sm text-gray-500">Thợ luôn túc trực ngay trong khuôn viên trường và Thạch Hòa.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center group">
+                    <div class="w-16 h-16 mx-auto bg-green-50 text-green-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-green-600 group-hover:text-white transition-colors"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <h3 class="font-bold text-gray-800 mb-2">Giá cả minh bạch</h3>
+                    <p class="text-sm text-gray-500">Báo giá rõ ràng trên App trước khi thợ tiến hành sửa chữa.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center group">
+                    <div class="w-16 h-16 mx-auto bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors"><i class="fa-solid fa-user-check"></i></div>
+                    <h3 class="font-bold text-gray-800 mb-2">Thợ giỏi, uy tín</h3>
+                    <p class="text-sm text-gray-500">100% thợ được phỏng vấn và đánh giá năng lực khắt khe.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-center group">
+                    <div class="w-16 h-16 mx-auto bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:bg-orange-600 group-hover:text-white transition-colors"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="font-bold text-gray-800 mb-2">Bảo hành dài hạn</h3>
+                    <p class="text-sm text-gray-500">Cam kết bảo hành sau sửa chữa, hoàn tiền nếu không hài lòng.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 mb-10">
+            <div class="bg-gray-900 rounded-3xl p-8 md:p-12 text-white flex flex-col md:flex-row gap-10 items-center overflow-hidden relative shadow-2xl">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-blue-600 rounded-full blur-3xl opacity-30"></div>
+                <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-purple-600 rounded-full blur-3xl opacity-20"></div>
+
+                <div class="w-full md:w-1/2 relative z-10">
+                    <span class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-2 block">Cơ hội việc làm</span>
+                    <h2 class="text-3xl md:text-4xl font-black mb-6 leading-tight">Gia nhập đội ngũ<br>FixIt Now ngay!</h2>
+                    <p class="text-gray-400 text-lg mb-8">Bạn có tay nghề? Bạn muốn kiếm thêm thu nhập ngay tại khu vực sinh sống mà không bị gò bó thời gian? Trở thành Đối tác của chúng tôi.</p>
+                    <button onclick="openTechModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold shadow-lg transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase"></i> Đăng ký làm thợ
+                    </button>
+                </div>
+
+                <div class="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
+                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10">
+                        <i class="fa-solid fa-map-location-dot text-2xl text-blue-400 mb-3"></i>
+                        <h4 class="font-bold text-lg mb-1">Việc ngay gần nhà</h4>
+                        <p class="text-sm text-gray-400">Khách hàng nằm gọn trong bán kính 3km quanh bạn.</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10">
+                        <i class="fa-solid fa-clock text-2xl text-green-400 mb-3"></i>
+                        <h4 class="font-bold text-lg mb-1">Tự do thời gian</h4>
+                        <p class="text-sm text-gray-400">Rảnh giờ nào nhận việc giờ đó, không ai quản lý.</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10">
+                        <i class="fa-solid fa-wallet text-2xl text-yellow-400 mb-3"></i>
+                        <h4 class="font-bold text-lg mb-1">Thu nhập hấp dẫn</h4>
+                        <p class="text-sm text-gray-400">Chiết khấu cực thấp, nhận tiền ngay sau khi hoàn thành.</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10">
+                        <i class="fa-solid fa-graduation-cap text-2xl text-purple-400 mb-3"></i>
+                        <h4 class="font-bold text-lg mb-1">Cộng đồng hỗ trợ</h4>
+                        <p class="text-sm text-gray-400">Giao lưu, nâng cao tay nghề cùng anh em kỹ thuật.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-20">
+            <div class="flex justify-between items-end mb-8 border-b pb-4">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-black text-[#1e328f] uppercase">Bài viết dành cho bạn</h2>
+                </div>
+                <button class="text-gray-800 font-bold hover:text-blue-600 transition text-sm flex items-center gap-1">Xem tất cả <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="alert('Tính năng xem chi tiết bài viết đang được phát triển!')" class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition cursor-pointer group flex flex-col">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=600&auto=format&fit=crop" alt="Blog" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm text-gray-500 font-medium">Tin tức</span>
+                                <span class="text-sm text-gray-400">14-03-2026</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-lg mb-2 leading-snug group-hover:text-blue-700 transition">3 bước xử lý nhanh khi ký túc xá đột ngột chập điện</h3>
+                        </div>
+                        <div class="text-right mt-6 border-t pt-3">
+                            <span class="text-sm text-gray-500 font-medium group-hover:text-blue-600 transition">Xem chi tiết</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="startBookingFlow()" class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition cursor-pointer group flex flex-col">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=600&auto=format&fit=crop" alt="Blog" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm text-gray-500 font-medium">Tin tức</span>
+                                <span class="text-sm text-gray-400">10-03-2026</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-lg mb-2 leading-snug group-hover:text-blue-700 transition">Combo vệ sinh điều hòa đón hè chỉ từ 150K cho sinh viên FPT</h3>
+                        </div>
+                        <div class="text-right mt-6 border-t pt-3">
+                            <span class="text-sm text-gray-500 font-medium group-hover:text-blue-600 transition">Xem chi tiết</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="alert('Mẹo tối ưu Win đang được biên soạn!')" class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-lg transition cursor-pointer group flex flex-col">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?q=80&w=600&auto=format&fit=crop" alt="Blog" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm text-gray-500 font-medium">Tin tức</span>
+                                <span class="text-sm text-gray-400">05-03-2026</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-lg mb-2 leading-snug group-hover:text-blue-700 transition">Nên cài Win 10 hay Win 11 để chơi game mượt mà nhất?</h3>
+                        </div>
+                        <div class="text-right mt-6 border-t pt-3">
+                            <span class="text-sm text-gray-500 font-medium group-hover:text-blue-600 transition">Xem chi tiết</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="booking-content" class="hidden pb-20">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex flex-col items-center">
+            
+            <div class="relative group w-full max-w-2xl mb-4">
+                <input type="text" id="search-services" onkeyup="handleSearch(this.value)" placeholder="Bạn đang hỏng đồ gì? (VD: chập điện, cài win...)" 
+                       class="w-full py-3.5 pl-14 pr-6 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white shadow-md transition-all text-gray-700 md:text-lg">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-4 md:top-4 text-xl text-gray-400 group-hover:text-blue-500 transition-colors"></i>
+            </div>
+
+            <div class="w-full max-w-2xl bg-blue-50 border border-blue-200 rounded-full p-2 pr-3 md:pr-4 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-inner">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <p class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Địa chỉ hiện tại của bạn</p>
+                        <p id="display-location" class="font-bold text-blue-800 text-sm md:text-base truncate max-w-[150px] sm:max-w-xs md:max-w-sm leading-tight">Chưa nhập địa chỉ</p>
+                    </div>
+                </div>
+                <button onclick="startBookingFlow()" class="text-xs md:text-sm font-bold text-blue-700 hover:text-white hover:bg-blue-600 bg-blue-200 px-4 py-2 rounded-full transition-colors flex items-center gap-1.5 shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-pen text-[10px]"></i> Sửa
+                </button>
+            </div>
+            
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 flex flex-col md:flex-row gap-8">
+            <div class="md:hidden">
+                <div class="flex justify-between items-end mb-3 px-1">
+                    <h2 class="font-bold text-gray-800 text-lg">Danh mục</h2>
+                </div>
+                <div id="mobile-categories" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 px-1"></div>
+            </div>
+
+            <aside class="hidden md:block w-1/4 flex-shrink-0">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-28">
+                    <h2 class="text-lg font-bold border-b pb-3 mb-3 text-gray-800">Danh mục dịch vụ</h2>
+                    <ul id="pc-categories" class="space-y-2"></ul>
+                </div>
+            </aside>
+
+            <main class="w-full md:w-3/4">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 id="section-title" class="text-2xl font-black text-gray-800">Chọn dịch vụ cần sửa</h2>
+                </div>
+                <div id="services-grid" class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"></div>
+            </main>
+        </div>
+    </div>
+
+
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center pt-2 pb-safe z-40">
+        <button onclick="returnToHome()" class="flex flex-col items-center p-2 text-blue-600 w-16"><i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] font-bold">Trang chủ</span></button>
+        <button id="btn-tech-mobile" onclick="openTechModal()" class="flex flex-col items-center p-2 text-gray-400 hover:text-blue-600 transition w-16"><i class="fa-solid fa-user-gear text-xl mb-1"></i><span class="text-[10px] font-bold">Làm thợ</span></button>
+        <button onclick="openHistoryModal()" class="flex flex-col items-center p-2 text-gray-400 hover:text-blue-600 transition w-16"><i class="fa-solid fa-clipboard-list text-xl mb-1"></i><span class="text-[10px] font-bold">Đơn hàng</span></button>
+    </nav>
+
+    <div id="tech-modal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="text-xl font-bold text-gray-800">Đăng ký làm Thợ</h3>
+                <button onclick="closeTechModal()" class="text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Họ và Tên</label><input type="text" id="tech-name" class="w-full border rounded-lg px-3 py-2 outline-none bg-gray-50" readonly></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Số điện thoại liên hệ</label><input type="text" id="tech-phone" placeholder="Nhập số điện thoại của bạn" class="w-full border rounded-lg px-3 py-2 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Khu vực hoạt động</label>
+                    <select id="tech-location" class="w-full border rounded-lg px-3 py-2 outline-none bg-white">
+                        <option value="Khu vực FPT Hòa Lạc">Khu vực FPT Hòa Lạc</option><option value="Xã Thạch Hòa">Xã Thạch Hòa</option>
+                    </select>
+                </div>
+                <div><label class="block text-sm font-semibold text-gray-700 mb-1">Kỹ năng chuyên môn</label>
+                    <div class="flex gap-2 flex-wrap">
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Điện" class="tech-skill rounded text-blue-600"> Điện</label>
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Nước" class="tech-skill rounded text-blue-600"> Nước</label>
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Máy tính" class="tech-skill rounded text-blue-600"> Máy tính</label>
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Sửa Khóa" class="tech-skill rounded text-blue-600"> Sửa khóa</label>
+                    </div>
+                </div>
+                <button onclick="submitTechRegistration()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-2">Gửi hồ sơ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl leading-none">&times;</button>
+            <div class="flex border-b mb-5">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 font-bold text-blue-600 border-b-2 border-blue-600">Đăng Nhập</button>
+                <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent">Đăng Ký</button>
+            </div>
+            <div id="form-login" class="space-y-4 block">
+                <input type="text" id="login-phone" placeholder="Tên đăng nhập / SĐT" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <input type="password" id="login-pass" placeholder="Mật khẩu" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <button onclick="submitLogin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl">Đăng Nhập Ngay</button>
+            </div>
+            <div id="form-register" class="space-y-4 hidden">
+                <input type="text" id="reg-name" placeholder="Họ và Tên" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <input type="text" id="reg-phone" placeholder="SĐT" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <input type="password" id="reg-pass" placeholder="Mật khẩu" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <button onclick="submitRegister()" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl">Tạo Tài Khoản</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-modal" class="hidden fixed inset-0 bg-gray-100 z-[80] overflow-y-auto pt-6 pb-12 px-4 transition-opacity">
+        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden relative">
+            <button onclick="closePaymentModal()" class="absolute top-4 right-5 text-gray-400 hover:text-red-600 text-3xl font-bold">&times;</button>
+            <div class="p-6 md:p-8">
+                <h2 class="text-lg font-bold text-gray-800 uppercase border-b-2 border-blue-800 inline-block pb-1 mb-6">Đơn Hàng</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
+                    <div><div class="font-bold text-gray-700">Mã đơn #:</div><div id="inv-id" class="text-gray-600 mt-1"></div></div>
+                    <div><div class="font-bold text-gray-700">Số tiền:</div><div id="inv-total" class="text-gray-600 mt-1"></div></div>
+                    <div><div class="font-bold text-gray-700">TT hóa đơn:</div><div class="mt-1"><span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">Chưa thanh toán</span></div></div>
+                    <div><div class="font-bold text-gray-700">Ngày tạo:</div><div id="inv-date" class="text-gray-600 mt-1"></div></div>
+                </div>
+                <div class="table-container mb-4">
+                    <table class="w-full min-w-[600px] border border-gray-300 text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-700">
+                            <tr><th class="border border-gray-300 px-4 py-3 font-bold">Tên dịch vụ</th><th class="border border-gray-300 px-4 py-3 font-bold">Địa chỉ / Ghi chú</th><th class="border border-gray-300 px-4 py-3 font-bold">Yêu cầu thu</th><th class="border border-gray-300 px-4 py-3 font-bold">Trạng thái</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td id="inv-service-name" class="border border-gray-300 px-4 py-3 text-gray-800"></td><td id="inv-location" class="border border-gray-300 px-4 py-3 font-semibold text-gray-800"></td><td id="inv-price" class="border border-gray-300 px-4 py-3 text-gray-800"></td><td class="border border-gray-300 px-4 py-3"><span class="bg-gray-500 text-white text-xs px-2 py-1 rounded">Chờ</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h2 class="text-lg font-bold text-gray-800 uppercase border-b-2 border-blue-800 inline-block pb-1 mb-6 mt-4">Thông Tin Thanh Toán</h2>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <table class="w-full border border-gray-300 text-sm text-left">
+                            <tbody>
+                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 w-1/3 text-gray-700">Ngân hàng</td><td class="px-4 py-3 font-bold text-gray-800 uppercase" id="bank-name-display"></td></tr>
+                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Số tài khoản:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="account-no-display"></span></td></tr>
+                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Tên tài khoản:</td><td class="px-4 py-3 font-semibold text-gray-800 uppercase" id="account-name-display"></td></tr>
+                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Số tiền:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="amount-display"></span></td></tr>
+                                <tr><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Nội dung thanh toán:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="transfer-content"></span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-full md:w-64 flex-shrink-0 flex items-start justify-center">
+                        <div class="border border-gray-300 p-2 rounded-lg bg-white shadow-sm"><img id="qr-image" src="" alt="Mã QR" class="w-48 h-48 object-contain"></div>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                    <button onclick="closePaymentModal(); returnToHome();" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-xl transition-colors shadow-md">Tôi đã chuyển khoản thành công</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="history-modal" class="hidden fixed inset-0 bg-black/50 z-[90] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl w-full max-w-lg h-[80vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b bg-white z-10">
+                <h3 class="text-xl font-bold text-gray-800">Lịch sử đặt thợ</h3>
+                <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-red-500 text-3xl leading-none">&times;</button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-100"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let services = []; 
+        let currentUser = null;
+        let currentCatId = null;
+        let currentSearch = "";
+        let globalLocation = ""; 
+
+        const categories = [
+            { id: 1, name: "Điện", icon: "fa-bolt", color: "yellow" },
+            { id: 2, name: "Ống Nước", icon: "fa-faucet-drip", color: "blue" },
+            { id: 3, name: "Máy tính", icon: "fa-laptop", color: "gray" },
+            { id: 4, name: "Sửa Khóa", icon: "fa-key", color: "orange" }
+        ];
+
+        function returnToHome() {
+            document.getElementById('landing-content').classList.remove('hidden');
+            document.getElementById('booking-content').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function startBookingFlow() {
+            if (!currentUser) { openAuthModal(); return; }
+            const loc = prompt("Nhập vị trí chính xác của bạn để thợ đến sửa (VD: Dom A, phòng 302):", globalLocation);
+            if (!loc) return; 
+            globalLocation = loc;
+            document.getElementById('display-location').innerText = globalLocation;
+            document.getElementById('landing-content').classList.add('hidden');
+            document.getElementById('booking-content').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        async function fetchServicesFromDB() {
+            try {
+                const res = await fetch(`${API_URL}/services`);
+                const data = await res.json();
+                
+                services = data.map(item => ({
+                    id: item.id, catId: item.cat_id, name: item.name, 
+                    price: item.price, isHot: item.is_hot, icon: item.icon,
+                    image: item.image 
+                }));
+                renderUI(); 
+            } catch (error) { console.error(error); }
+        }
+
+        function renderUI() {
+            renderCategories();
+            renderServices();
+        }
+
+        function renderCategories() {
+            const mobileContainer = document.getElementById('mobile-categories');
+            const pcContainer = document.getElementById('pc-categories');
+            mobileContainer.innerHTML = ''; pcContainer.innerHTML = '';
+
+            categories.forEach(cat => {
+                const isActive = currentCatId === cat.id;
+                mobileContainer.innerHTML += `
+                    <div onclick="filterCategory(${cat.id})" class="${isActive ? 'ring-2 ring-blue-500' : ''} bg-white rounded-xl shadow-sm border border-gray-200 p-3 min-w-[115px] flex flex-col items-center flex-shrink-0 active:scale-95 transition-transform cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-${cat.color}-100 flex items-center justify-center text-${cat.color}-500 text-xl mb-2"><i class="fa-solid ${cat.icon}"></i></div>
+                        <h3 class="font-bold text-gray-800 text-sm text-center">${cat.name}</h3>
+                    </div>`;
+                pcContainer.innerHTML += `
+                    <li><button onclick="filterCategory(${cat.id})" class="w-full flex items-center gap-3 p-3 rounded-lg ${isActive ? 'bg-blue-50 text-blue-700 font-bold border border-blue-100' : 'hover:bg-gray-50 text-gray-700 font-medium'} transition">
+                        <div class="w-8 h-8 rounded-full ${isActive ? 'bg-white text-blue-600 shadow-sm' : 'bg-gray-100 text-gray-500'} flex items-center justify-center"><i class="fa-solid ${cat.icon}"></i></div>
+                        ${cat.name}
+                    </button></li>`;
+            });
+        }
+
+        function renderServices() {
+            const container = document.getElementById('services-grid');
+            const title = document.getElementById('section-title');
+            container.innerHTML = '';
+
+            let filtered = services;
+            if (currentCatId) filtered = filtered.filter(s => s.catId === currentCatId);
+            if (currentSearch) filtered = filtered.filter(s => s.name.toLowerCase().includes(currentSearch.toLowerCase()));
+
+            filtered.forEach(item => {
+                const hotBadge = item.isHot ? `<span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black shadow-md border border-red-600">HOT</span>` : '';
+                
+                const defaultImage = `https://placehold.co/400x300/e2e8f0/3b82f6?text=${encodeURIComponent(item.name)}`;
+                const imageUrl = item.image ? item.image : defaultImage;
+
+                container.innerHTML += `
+                    <div onclick="bookService(${item.id})" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-blue-200 transition-all duration-300 group flex flex-col cursor-pointer transform hover:-translate-y-1">
+                        
+                        <div class="h-32 md:h-40 bg-gray-200 relative overflow-hidden border-b border-gray-100">
+                            <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80 group-hover:opacity-50 transition-opacity"></div>
+                            
+                            <div class="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-blue-600 shadow-sm z-10">
+                                <i class="fa-solid ${item.icon} text-sm"></i>
+                            </div>
+                            
+                            <div class="absolute top-3 right-3 z-10">${hotBadge}</div>
+                        </div>
+
+                        <div class="p-4 md:p-5 flex-1 flex flex-col justify-between relative">
+                            <div>
+                                <h3 class="text-sm md:text-base font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">${item.name}</h3>
+                                <div class="text-red-500 text-base md:text-lg font-black mt-1 md:mt-2">${item.price}</div>
+                            </div>
+                            <div class="w-full mt-3 bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white py-2 rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-300 flex justify-center items-center gap-2">
+                                Bấm Để Chọn <i class="fa-solid fa-arrow-right-long opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterCategory(id) { currentCatId = id; currentSearch = ""; renderUI(); }
+        function handleSearch(query) { currentSearch = query; if(query !== "") currentCatId = null; renderUI(); }
+
+        async function bookService(id) {
+            if (!currentUser) return openAuthModal();
+            if (!globalLocation) { alert("Hệ thống bị mất địa chỉ. Vui lòng nhập lại!"); return startBookingFlow(); }
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.id, userName: currentUser.name, serviceId: id, location: globalLocation })
+                });
+                const data = await res.json();
+                if (data.success) { openPaymentModal(data.order); } else { alert("Lỗi: " + data.error); }
+            } catch (error) { alert("Lỗi tạo đơn. Đảm bảo Server Backend đang chạy!"); }
+        }
+
+        // --- AUTH & MODALS LOGIC ---
+        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); document.body.classList.add('modal-active'); }
+        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
+        function switchAuthTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            document.getElementById('tab-login').className = `flex-1 py-2 font-bold ${isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 border-b-2 border-transparent'}`;
+            document.getElementById('tab-register').className = `flex-1 py-2 font-bold ${!isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-400 border-b-2 border-transparent'}`;
+        }
+
+        async function submitRegister() {
+            const fullName = document.getElementById('reg-name').value, phone = document.getElementById('reg-phone').value, password = document.getElementById('reg-pass').value;
+            if(!fullName || !phone || !password) return alert("Vui lòng điền đủ thông tin!");
+            try {
+                const res = await fetch(`${API_URL}/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fullName, phone, password }) });
+                const data = await res.json();
+                if(data.success) { alert(data.message); switchAuthTab('login'); } else { alert(data.error); }
+            } catch (err) { alert("Lỗi kết nối Server!"); }
+        }
+
+        async function submitLogin() {
+            const phone = document.getElementById('login-phone').value, password = document.getElementById('login-pass').value;
+            if(!phone || !password) return alert("Vui lòng nhập thông tin!");
+            try {
+                const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, password }) });
+                const data = await res.json();
+                if(data.success) {
+                    currentUser = { id: data.user.id, name: data.user.full_name, isTech: data.user.is_tech };
+                    const btn = document.getElementById('login-btn');
+                    btn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">${currentUser.name}</span>`;
+                    btn.classList.replace('text-blue-600', 'text-red-500'); btn.classList.replace('border-blue-600', 'border-red-500'); btn.classList.replace('hover:bg-blue-50', 'hover:bg-red-50');
+                    btn.onclick = logout; 
+
+                    if(currentUser.isTech) {
+                        const btnPc = document.getElementById('btn-tech-pc');
+                        const btnMobile = document.getElementById('btn-tech-mobile');
+                        if(btnPc) btnPc.style.display = 'none';
+                        if(btnMobile) btnMobile.style.display = 'none';
+                    }
+                    closeAuthModal(); alert(`Chào mừng ${currentUser.name}!`);
+                } else { alert(data.error); }
+            } catch (err) { alert("Lỗi kết nối Server!"); }
+        }
+
+        function logout() {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+                currentUser = null; globalLocation = "";
+                const btn = document.getElementById('login-btn');
+                btn.innerHTML = `<i class="fa-solid fa-user"></i> <span class="hidden md:inline">Đăng nhập</span>`;
+                btn.classList.replace('text-red-500', 'text-blue-600'); btn.classList.replace('border-red-500', 'border-blue-600'); btn.classList.replace('hover:bg-red-50', 'hover:bg-blue-50');
+                btn.onclick = openAuthModal;
+                const btnPc = document.getElementById('btn-tech-pc');
+                const btnMobile = document.getElementById('btn-tech-mobile');
+                if(btnPc) btnPc.style.display = '';
+                if(btnMobile) btnMobile.style.display = '';
+                returnToHome(); alert("Đã đăng xuất!");
+            }
+        }
+
+        function openPaymentModal(orderData) {
+            document.getElementById('payment-modal').classList.remove('hidden'); document.body.classList.add('modal-active');
+            const bankId = 'TCB'; const accountNo = '0123456789'; const accountName = 'NGUYEN VAN KHOI'; 
+            document.getElementById('inv-id').innerText = orderData.id;
+            document.getElementById('inv-total').innerText = orderData.price;
+            document.getElementById('inv-date').innerText = orderData.date;
+            document.getElementById('inv-service-name').innerText = orderData.serviceName;
+            document.getElementById('inv-location').innerText = orderData.location;
+            document.getElementById('inv-price').innerText = orderData.price;
+            document.getElementById('bank-name-display').innerText = `TECHCOMBANK`;
+            document.getElementById('account-no-display').innerText = accountNo;
+            document.getElementById('account-name-display').innerText = accountName;
+            const numericPrice = orderData.price.replace(/\D/g, '') || "0";
+            document.getElementById('amount-display').innerText = numericPrice + " VNĐ";
+            const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${numericPrice}&addInfo=${encodeURIComponent(orderData.id)}&accountName=${encodeURIComponent(accountName)}`;
+            document.getElementById('qr-image').src = qrUrl;
+        }
+
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
+
+        async function openHistoryModal() {
+            if (!currentUser) { alert("Bạn cần đăng nhập để xem lịch sử!"); openAuthModal(); return; }
+            document.getElementById('history-modal').classList.remove('hidden'); document.body.classList.add('modal-active');
+            const container = document.getElementById('history-list');
+            container.innerHTML = '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p>Đang tải dữ liệu...</p></div>';
+            try {
+                const res = await fetch(`${API_URL}/orders/history/${currentUser.id}`);
+                const data = await res.json();
+                if (data.success) {
+                    if (data.orders.length === 0) {
+                        container.innerHTML = `<div class="text-center text-gray-400 py-20"><i class="fa-solid fa-box-open text-6xl mb-4 text-gray-300"></i><p class="text-lg font-medium">Bạn chưa có đơn hàng nào</p></div>`; return;
+                    }
+                    container.innerHTML = data.orders.map(o => {
+                        return `<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex gap-4 items-center"><div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid ${o.icon || 'fa-wrench'}"></i></div><div class="flex-1"><div class="flex justify-between items-start"><h4 class="font-bold text-gray-800 leading-tight">${o.service_name}</h4><span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded tracking-wide">FIXIT${o.id}</span></div><p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${o.location}</p><div class="flex justify-between items-end mt-2"><span class="text-red-500 font-extrabold">${o.price}</span><span class="text-xs text-gray-400 font-medium">${new Date(o.created_at).toLocaleString('vi-VN')}</span></div></div></div>`;
+                    }).join('');
+                } else { container.innerHTML = `<div class="text-red-500 text-center py-10">Lỗi: ${data.error}</div>`; }
+            } catch (error) { container.innerHTML = '<div class="text-red-500 text-center py-10">Lỗi kết nối Server!</div>'; }
+        }
+
+        function closeHistoryModal() { document.getElementById('history-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
+
+        function openTechModal() { 
+            if (!currentUser) { alert("Cần đăng nhập trước!"); openAuthModal(); return; }
+            document.getElementById('tech-modal').classList.remove('hidden'); document.body.classList.add('modal-active');
+            document.getElementById('tech-name').value = currentUser.name;
+        }
+
+        function closeTechModal() { document.getElementById('tech-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
+
+        async function submitTechRegistration() { 
+            if (!currentUser) return alert("Vui lòng đăng nhập!");
+            const phone = document.getElementById('tech-phone').value;
+            const location = document.getElementById('tech-location').value;
+            const checkedSkills = document.querySelectorAll('.tech-skill:checked');
+            const skillsArray = Array.from(checkedSkills).map(cb => cb.value);
+            const skillsString = skillsArray.join(', '); 
+            if (!phone) return alert("Vui lòng nhập số điện thoại!");
+            if (skillsArray.length === 0) return alert("Chọn ít nhất 1 kỹ năng!");
+            try {
+                const res = await fetch(`${API_URL}/tech-register`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.id, phone: phone, location: location, skills: skillsString })
+                });
+                const data = await res.json();
+                if (data.success) { alert("Đã gửi hồ sơ!"); closeTechModal(); } else { alert("Lỗi: " + data.error); }
+            } catch (err) { alert("Lỗi kết nối Server!"); }
+        }
+
+        window.onload = fetchServicesFromDB;
+    </script>
+</body>
+</html>
