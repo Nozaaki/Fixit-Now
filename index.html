@@ -634,8 +634,12 @@
                     detailModal.remove(); // Đóng popup chi tiết dịch vụ
                     
                     if (data.success) { 
-                        // Đổ dữ liệu từ Backend trả về lên giao diện Modal hóa đơn chi tiết
+                        // Đổ dữ liệu lên giao diện Modal hóa đơn chi tiết
                         document.getElementById('bill-id').innerText = data.order.id;
+                        
+                        // 👇 KHÔI ĐỂ Ý DÒNG NÀY: Gài ID số nguyên gốc (Ví dụ: 5) ẩn vào thẻ để lát nữa bốc ra dùng
+                        document.getElementById('bill-id').setAttribute('data-raw-id', data.order.rawId);
+                        
                         document.getElementById('bill-price').innerText = data.order.price;
                         document.getElementById('bill-date').innerText = data.order.date;
                         
@@ -653,7 +657,7 @@
                         // Cập nhật link ảnh QR Code động
                         document.getElementById('bill-qr-img').src = data.order.qrUrl;
 
-                        // Mở bung cái màn hình hóa đơn VietQR lên
+                        // Mở bung màn hình hóa đơn VietQR
                         document.getElementById('payment-modal').classList.remove('hidden'); 
                     } else { 
                         alert("Lỗi: " + data.error); 
@@ -852,6 +856,43 @@
             returnToHome();
             alert("Hệ thống đã ghi nhận thông báo chuyển khoản của bạn!");
         }
+
+        // Phiên bản nâng cấp của hàm handlePaymentConfirmation với cách lấy ID số nguyên gốc an toàn hơn từ thuộc tính ẩn data-raw-id mà ta đã gài vào thẻ hiển thị mã đơn hàng ở trên, tránh lỗi parsing khi có sự thay đổi định dạng hiển thị mã đơn hàng trong tương lai
+        async function handlePaymentConfirmation() {
+            // 1. Bốc trực tiếp ID số nguyên gốc từ thuộc tính ẩn ta vừa gài ở trên
+            const rawIdAttr = document.getElementById('bill-id').getAttribute('data-raw-id');
+            const rawOrderId = parseInt(rawIdAttr); 
+            
+            const price = document.getElementById('bill-price').innerText;
+            const userName = currentUser ? currentUser.name : "Khách";
+
+            // Kiểm tra an toàn bảo vệ hệ thống nếu ID bị lấy hụt
+            if (!rawOrderId || isNaN(rawOrderId)) {
+                alert("Lỗi hệ thống: Không tìm thấy mã định danh đơn hàng gốc!");
+                return;
+            }
+
+            try {
+                // Gửi thẳng ID chuẩn nguyên bản lên Backend xử lý sửa tin nhắn
+                await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        isConfirmation: true, 
+                        rawOrderId: rawOrderId, 
+                        userName: userName, 
+                        price: price 
+                    })
+                });
+            } catch (e) { 
+                console.error("Lỗi gửi báo cáo chuyển khoản:", e); 
+            }
+
+            closePaymentModal();
+            returnToHome();
+            alert("Hệ thống đã ghi nhận thông báo chuyển khoản của bạn!");
+        }
+
         // Thêm hàm bổ trợ click copy thông tin
         function copyText(elementId) {
             const text = document.getElementById(elementId).innerText;
