@@ -205,3 +205,16 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server FixIt Now đang hoạt động tại cổng ${PORT}`);
 });
+
+// ==========================================
+// CẤU HÌNH TRẢ VỀ GIAO DIỆN FRONTEND
+// ==========================================
+const path = require('path');
+
+// Chỉ định cho Express biết vị trí để đọc các file tĩnh (nếu có hình ảnh, css đi kèm)
+app.use(express.static(path.join(__dirname)));
+
+// Khi người dùng truy cập vào đường link gốc (/) -> Tự động gửi file index.html về trình duyệt
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
