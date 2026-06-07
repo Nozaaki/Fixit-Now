@@ -108,7 +108,11 @@ app.post('/api/register', async (req, res) => {
         );
         res.json({ success: true, message: "Đăng ký thành công!", user: result.rows[0] });
     } catch (err) {
-        res.json({ success: false, error: "Tài khoản này đã được đăng ký hoặc lỗi hệ thống!" });
+        // In lỗi chi tiết ra tab LOGS trên Render để Khôi kiểm tra
+        console.error("🔴 LỖI ĐĂNG KÝ THỰC TẾ:", err.message);
+        
+        // Trả về lỗi thật cho giao diện alert để biết đường xử lý
+        res.json({ success: false, error: `Lỗi hệ thống: ${err.message}` });
     }
 });
 
