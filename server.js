@@ -159,6 +159,40 @@ app.post('/api/tech-register', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('🚀 Server FixIt Now đang chạy tại http://localhost:3000');
+// 7. API Viết Đánh Giá (Shopee / Lazada Style)
+app.post('/api/reviews', async (req, res) => {
+    const { orderId, userId, serviceId, rating, comment } = req.body;
+    try {
+        // Kiểm tra xem đơn hàng này đã được đánh giá chưa
+        const check = await pool.query('SELECT id FROM reviews WHERE order_id = $1', [orderId]);
+        if (check.rows.length > 0) {
+            return res.json({ success: false, error: "Đơn hàng này đã được đánh giá trước đó!" });
+        }
+
+        await pool.query(
+            'INSERT INTO reviews (order_id, user_id, service_id, rating, comment) VALUES ($1, $2, $3, $4, $5)',
+            [orderId, userId, serviceId, rating, comment]
+        );
+        res.json({ success: true, message: "Cảm ơn bạn đã đánh giá dịch vụ!" });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+// 8. API Lấy tất cả đánh giá của 1 dịch vụ
+app.get('/api/reviews/:serviceId', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT r.id, r.rating, r.comment, r.created_at, u.full_name 
+            FROM reviews r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.service_id = $1
+            ORDER BY r.created_at DESC
+        `, [req.params.serviceId]);
+        res.json({ success: true, reviews: result.rows });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+// Server lắng nghe cổng động do nền tảng Cloud cấp (Render/Heroku/Railway)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server FixIt Now đang hoạt động tại cổng ${PORT}`);
 });

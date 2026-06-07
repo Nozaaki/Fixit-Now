@@ -92,3 +92,25 @@ VALUES
 ('0912345678', 'Thợ Nước Trần Văn A', '123456', TRUE);
 -- 8. Thêm cột image vào bảng services
 ALTER TABLE services ADD COLUMN IF NOT EXISTS image TEXT;
+
+-----Sửa lại lần 2-------
+-- 1. XÓA BỚT CÁC DỊCH VỤ KHÔNG CẦN THIẾT, CHỈ GIỮ LẠI ĐIỆN THOẠI & MÁY TÍNH (cat_id = 3)
+TRUNCATE TABLE services RESTART IDENTITY CASCADE;
+
+INSERT INTO services (id, cat_id, name, price, is_hot, icon) VALUES 
+(301, 3, 'Cài lại Win & Phần mềm đồ họa', '100.000đ', true, 'fa-windows'),
+(302, 3, 'Sửa màn hình / Ép kính điện thoại', 'Kiểm tra báo giá', true, 'fa-mobile-screen'),
+(303, 3, 'Vệ sinh Laptop & Tra keo tản nhiệt', '120.000đ', false, 'fa-laptop-medical'),
+(304, 3, 'Thay Pin / Bàn phím Laptop', 'Từ 200.000đ', false, 'fa-keyboard'),
+(305, 3, 'Cứu dữ liệu ổ cứng / Thẻ nhớ', 'Khảo sát báo giá', false, 'fa-database');
+
+-- 2. TẠO BẢNG ĐÁNH GIÁ SẢN PHẨM/DỊCH VỤ (Kiểu Shopee, Lazada)
+CREATE TABLE IF NOT EXISTS reviews (
+    id SERIAL PRIMARY KEY,
+    order_id INT UNIQUE REFERENCES orders(id) ON DELETE CASCADE, -- Mỗi đơn hàng chỉ được đánh giá 1 lần
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    service_id INT REFERENCES services(id) ON DELETE CASCADE,
+    rating INT CHECK (rating >= 1 AND rating <= 5),             -- Số sao từ 1 đến 5
+    comment TEXT,                                               -- Nội dung bình luận
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

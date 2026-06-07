@@ -16,6 +16,7 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased text-gray-800 pb-24 md:pb-0">
 
+    <!-- HEADER -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
@@ -40,15 +41,14 @@
         </div>
     </header>
 
-
+    <!-- LANDING CONTENT -->
     <div id="landing-content" class="block">
-        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 md:mt-8">
             <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 rounded-3xl p-8 md:p-14 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl relative overflow-hidden">
                 <div class="relative z-10 max-w-xl">
                     <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-bold tracking-wider uppercase mb-4 inline-block backdrop-blur-sm border border-white/30">Thông tin liên hệ:0987654321</span>
                     <h1 class="text-3xl md:text-5xl font-black mb-4 leading-tight">Gọi thợ sửa chữa<br><span class="text-yellow-400">chỉ trong 15 phút!</span></h1>
-                    <p class="text-blue-100 text-lg mb-8 font-medium">Bạn đang ở Dom, chập điện hay hỏng vòi nước? Chỉ cần nhập địa chỉ, chúng tôi sẽ điều phối thợ uy tín nhất đến ngay lập tức.</p>
+                    <p class="text-blue-100 text-lg mb-8 font-medium">Bạn đang ở Dom, hỏng máy tính hay hỏng điện thoại? Chỉ cần nhập địa chỉ, chúng tôi sẽ điều phối thợ uy tín nhất đến ngay lập tức.</p>
                     <button onclick="startBookingFlow()" class="bg-white text-blue-700 hover:bg-gray-100 px-8 py-4 rounded-full font-extrabold text-lg shadow-xl transition-all hover:-translate-y-1 flex items-center gap-2">
                         <i class="fa-solid fa-location-crosshairs"></i> Nhập địa chỉ của bạn
                     </button>
@@ -188,13 +188,11 @@
         </div>
     </div>
 
-
+    <!-- BOOKING CONTENT -->
     <div id="booking-content" class="hidden pb-20">
-        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex flex-col items-center">
-            
             <div class="relative group w-full max-w-2xl mb-4">
-                <input type="text" id="search-services" onkeyup="handleSearch(this.value)" placeholder="Bạn đang hỏng đồ gì? (VD: chập điện, cài win...)" 
+                <input type="text" id="search-services" onkeyup="handleSearch(this.value)" placeholder="Bạn đang gặp lỗi gì? (VD: cài win, ép kính...)" 
                        class="w-full py-3.5 pl-14 pr-6 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white shadow-md transition-all text-gray-700 md:text-lg">
                 <i class="fa-solid fa-magnifying-glass absolute left-5 top-4 md:top-4 text-xl text-gray-400 group-hover:text-blue-500 transition-colors"></i>
             </div>
@@ -213,7 +211,6 @@
                     <i class="fa-solid fa-pen text-[10px]"></i> Sửa
                 </button>
             </div>
-            
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 flex flex-col md:flex-row gap-8">
@@ -240,13 +237,14 @@
         </div>
     </div>
 
-
+    <!-- MOBILE BOTTOM NAVIGATION -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center pt-2 pb-safe z-40">
         <button onclick="returnToHome()" class="flex flex-col items-center p-2 text-blue-600 w-16"><i class="fa-solid fa-house text-xl mb-1"></i><span class="text-[10px] font-bold">Trang chủ</span></button>
         <button id="btn-tech-mobile" onclick="openTechModal()" class="flex flex-col items-center p-2 text-gray-400 hover:text-blue-600 transition w-16"><i class="fa-solid fa-user-gear text-xl mb-1"></i><span class="text-[10px] font-bold">Làm thợ</span></button>
         <button onclick="openHistoryModal()" class="flex flex-col items-center p-2 text-gray-400 hover:text-blue-600 transition w-16"><i class="fa-solid fa-clipboard-list text-xl mb-1"></i><span class="text-[10px] font-bold">Đơn hàng</span></button>
     </nav>
 
+    <!-- MODAL ĐĂNG KÝ LÀM THỢ -->
     <div id="tech-modal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -263,10 +261,8 @@
                 </div>
                 <div><label class="block text-sm font-semibold text-gray-700 mb-1">Kỹ năng chuyên môn</label>
                     <div class="flex gap-2 flex-wrap">
-                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Điện" class="tech-skill rounded text-blue-600"> Điện</label>
-                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Nước" class="tech-skill rounded text-blue-600"> Nước</label>
-                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Máy tính" class="tech-skill rounded text-blue-600"> Máy tính</label>
-                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Sửa Khóa" class="tech-skill rounded text-blue-600"> Sửa khóa</label>
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Máy tính" class="tech-skill rounded text-blue-600"> Máy tính & Laptop</label>
+                        <label class="flex items-center gap-1 bg-gray-100 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-blue-50"><input type="checkbox" value="Điện thoại" class="tech-skill rounded text-blue-600"> Điện thoại</label>
                     </div>
                 </div>
                 <button onclick="submitTechRegistration()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl mt-2">Gửi hồ sơ</button>
@@ -274,6 +270,7 @@
         </div>
     </div>
 
+    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-modal" class="hidden fixed inset-0 bg-black/50 z-[70] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-2xl relative">
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl leading-none">&times;</button>
@@ -282,64 +279,29 @@
                 <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 font-bold text-gray-400 border-b-2 border-transparent">Đăng Ký</button>
             </div>
             <div id="form-login" class="space-y-4 block">
-                <input type="text" id="login-phone" placeholder="Tên đăng nhập / SĐT" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <input type="text" id="login-phone" placeholder="Số điện thoại" class="w-full border rounded-lg px-4 py-3 outline-none">
                 <input type="password" id="login-pass" placeholder="Mật khẩu" class="w-full border rounded-lg px-4 py-3 outline-none">
                 <button onclick="submitLogin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl">Đăng Nhập Ngay</button>
             </div>
             <div id="form-register" class="space-y-4 hidden">
                 <input type="text" id="reg-name" placeholder="Họ và Tên" class="w-full border rounded-lg px-4 py-3 outline-none">
-                <input type="text" id="reg-phone" placeholder="SĐT" class="w-full border rounded-lg px-4 py-3 outline-none">
+                <input type="text" id="reg-phone" placeholder="Số điện thoại" class="w-full border rounded-lg px-4 py-3 outline-none">
                 <input type="password" id="reg-pass" placeholder="Mật khẩu" class="w-full border rounded-lg px-4 py-3 outline-none">
                 <button onclick="submitRegister()" class="w-full bg-green-500 text-white font-bold py-3 rounded-xl">Tạo Tài Khoản</button>
             </div>
         </div>
     </div>
 
-    <div id="payment-modal" class="hidden fixed inset-0 bg-gray-100 z-[80] overflow-y-auto pt-6 pb-12 px-4 transition-opacity">
-        <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden relative">
-            <button onclick="closePaymentModal()" class="absolute top-4 right-5 text-gray-400 hover:text-red-600 text-3xl font-bold">&times;</button>
-            <div class="p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-800 uppercase border-b-2 border-blue-800 inline-block pb-1 mb-6">Đơn Hàng</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
-                    <div><div class="font-bold text-gray-700">Mã đơn #:</div><div id="inv-id" class="text-gray-600 mt-1"></div></div>
-                    <div><div class="font-bold text-gray-700">Số tiền:</div><div id="inv-total" class="text-gray-600 mt-1"></div></div>
-                    <div><div class="font-bold text-gray-700">TT hóa đơn:</div><div class="mt-1"><span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">Chưa thanh toán</span></div></div>
-                    <div><div class="font-bold text-gray-700">Ngày tạo:</div><div id="inv-date" class="text-gray-600 mt-1"></div></div>
-                </div>
-                <div class="table-container mb-4">
-                    <table class="w-full min-w-[600px] border border-gray-300 text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-700">
-                            <tr><th class="border border-gray-300 px-4 py-3 font-bold">Tên dịch vụ</th><th class="border border-gray-300 px-4 py-3 font-bold">Địa chỉ / Ghi chú</th><th class="border border-gray-300 px-4 py-3 font-bold">Yêu cầu thu</th><th class="border border-gray-300 px-4 py-3 font-bold">Trạng thái</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td id="inv-service-name" class="border border-gray-300 px-4 py-3 text-gray-800"></td><td id="inv-location" class="border border-gray-300 px-4 py-3 font-semibold text-gray-800"></td><td id="inv-price" class="border border-gray-300 px-4 py-3 text-gray-800"></td><td class="border border-gray-300 px-4 py-3"><span class="bg-gray-500 text-white text-xs px-2 py-1 rounded">Chờ</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <h2 class="text-lg font-bold text-gray-800 uppercase border-b-2 border-blue-800 inline-block pb-1 mb-6 mt-4">Thông Tin Thanh Toán</h2>
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="flex-1">
-                        <table class="w-full border border-gray-300 text-sm text-left">
-                            <tbody>
-                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 w-1/3 text-gray-700">Ngân hàng</td><td class="px-4 py-3 font-bold text-gray-800 uppercase" id="bank-name-display"></td></tr>
-                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Số tài khoản:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="account-no-display"></span></td></tr>
-                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Tên tài khoản:</td><td class="px-4 py-3 font-semibold text-gray-800 uppercase" id="account-name-display"></td></tr>
-                                <tr class="border-b border-gray-300"><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Số tiền:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="amount-display"></span></td></tr>
-                                <tr><td class="px-4 py-3 font-bold bg-gray-50 text-gray-700">Nội dung thanh toán:</td><td class="px-4 py-3 font-bold text-gray-800 flex items-center gap-2"><span id="transfer-content"></span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="w-full md:w-64 flex-shrink-0 flex items-start justify-center">
-                        <div class="border border-gray-300 p-2 rounded-lg bg-white shadow-sm"><img id="qr-image" src="" alt="Mã QR" class="w-48 h-48 object-contain"></div>
-                    </div>
-                </div>
-                <div class="text-center mt-8">
-                    <button onclick="closePaymentModal(); returnToHome();" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-xl transition-colors shadow-md">Tôi đã chuyển khoản thành công</button>
-                </div>
-            </div>
-        </div>
+    <!-- MODAL THANH TOÁN THÀNH CÔNG -->
+    <div id="payment-modal" class="hidden fixed inset-0 bg-white z-[80] p-6 max-w-md mx-auto rounded-xl shadow-lg flex flex-col justify-center items-center text-center">
+        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl mb-4"><i class="fa-solid fa-circle-check"></i></div>
+        <h2 class="text-xl font-bold text-green-600 mb-2">Đặt thợ thành công!</h2>
+        <p class="text-sm text-gray-500 mb-4">Hệ thống đang điều phối kỹ thuật viên công nghệ qua vị trí của bạn.</p>
+        <p class="text-xs bg-gray-100 p-2 rounded mb-6 font-mono font-bold text-gray-700" id="inv-id"></p>
+        <button onclick="closePaymentModal(); returnToHome();" class="bg-blue-600 text-white px-10 py-2.5 rounded-xl font-bold w-full">Xong</button>
     </div>
 
+    <!-- MODAL LỊCH SỬ ĐƠN HÀNG -->
     <div id="history-modal" class="hidden fixed inset-0 bg-black/50 z-[90] flex items-center justify-center px-4 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl w-full max-w-lg h-[80vh] flex flex-col shadow-2xl relative overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b bg-white z-10">
@@ -350,7 +312,40 @@
         </div>
     </div>
 
+    <!-- MODAL ĐÁNH GIÁ 5 SAO CHUẨN SHOPEE/LAZADA -->
+    <div id="review-modal" class="hidden fixed inset-0 bg-black/60 z-[110] flex items-center justify-center px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+            <div class="text-center mb-4">
+                <h3 class="text-xl font-black text-gray-900">Đánh giá dịch vụ sửa chữa</h3>
+                <p class="text-sm text-gray-400 mt-1 font-bold text-blue-600" id="review-service-name">Tên dịch vụ</p>
+            </div>
+            
+            <!-- Chọn Số sao -->
+            <div class="flex justify-center gap-2 my-6">
+                <input type="hidden" id="rating-value" value="5">
+                <button onclick="setRating(1)" class="star-btn text-3xl text-yellow-400 transition-transform active:scale-120"><i class="fa-solid fa-star"></i></button>
+                <button onclick="setRating(2)" class="star-btn text-3xl text-yellow-400 transition-transform active:scale-120"><i class="fa-solid fa-star"></i></button>
+                <button onclick="setRating(3)" class="star-btn text-3xl text-yellow-400 transition-transform active:scale-120"><i class="fa-solid fa-star"></i></button>
+                <button onclick="setRating(4)" class="star-btn text-3xl text-yellow-400 transition-transform active:scale-120"><i class="fa-solid fa-star"></i></button>
+                <button onclick="setRating(5)" class="star-btn text-3xl text-yellow-400 transition-transform active:scale-120"><i class="fa-solid fa-star"></i></button>
+            </div>
+
+            <!-- Viết bình luận -->
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Nội dung phản hồi</label>
+                <textarea id="review-comment" rows="3" placeholder="Máy tính/Điện thoại chạy mượt chưa bạn? Thợ sửa có nhiệt tình chu đáo không..." class="w-full border rounded-xl p-3 outline-none text-sm focus:border-blue-500 transition-all"></textarea>
+            </div>
+
+            <input type="hidden" id="review-order-id">
+            <input type="hidden" id="review-service-id">
+            <button onclick="submitReview()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow-md transition-colors">Gửi đánh giá</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        // ⚠️ ĐỔI LINK NÀY THÀNH LINK SERVER THẬT CỦA BẠN SAU KHI DEPLOY LÊN RENDER ĐỂ CHẠY INTERNET THẬT
         const API_URL = 'http://localhost:3000/api';
         let services = []; 
         let currentUser = null;
@@ -359,10 +354,7 @@
         let globalLocation = ""; 
 
         const categories = [
-            { id: 1, name: "Điện", icon: "fa-bolt", color: "yellow" },
-            { id: 2, name: "Ống Nước", icon: "fa-faucet-drip", color: "blue" },
-            { id: 3, name: "Máy tính", icon: "fa-laptop", color: "gray" },
-            { id: 4, name: "Sửa Khóa", icon: "fa-key", color: "orange" }
+            { id: 3, name: "Máy tính & Điện thoại", icon: "fa-laptop", color: "gray" }
         ];
 
         function returnToHome() {
@@ -407,10 +399,10 @@
             mobileContainer.innerHTML = ''; pcContainer.innerHTML = '';
 
             categories.forEach(cat => {
-                const isActive = currentCatId === cat.id;
+                const isActive = currentCatId === cat.id || currentCatId === null;
                 mobileContainer.innerHTML += `
-                    <div onclick="filterCategory(${cat.id})" class="${isActive ? 'ring-2 ring-blue-500' : ''} bg-white rounded-xl shadow-sm border border-gray-200 p-3 min-w-[115px] flex flex-col items-center flex-shrink-0 active:scale-95 transition-transform cursor-pointer">
-                        <div class="w-12 h-12 rounded-full bg-${cat.color}-100 flex items-center justify-center text-${cat.color}-500 text-xl mb-2"><i class="fa-solid ${cat.icon}"></i></div>
+                    <div onclick="filterCategory(${cat.id})" class="${isActive ? 'ring-2 ring-blue-500' : ''} bg-white rounded-xl shadow-sm border border-gray-200 p-3 min-w-[150px] flex flex-col items-center flex-shrink-0 active:scale-95 transition-transform cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-500 text-xl mb-2"><i class="fa-solid ${cat.icon}"></i></div>
                         <h3 class="font-bold text-gray-800 text-sm text-center">${cat.name}</h3>
                     </div>`;
                 pcContainer.innerHTML += `
@@ -427,37 +419,30 @@
             container.innerHTML = '';
 
             let filtered = services;
-            if (currentCatId) filtered = filtered.filter(s => s.catId === currentCatId);
             if (currentSearch) filtered = filtered.filter(s => s.name.toLowerCase().includes(currentSearch.toLowerCase()));
 
             filtered.forEach(item => {
                 const hotBadge = item.isHot ? `<span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black shadow-md border border-red-600">HOT</span>` : '';
-                
-                const defaultImage = `https://placehold.co/400x300/e2e8f0/3b82f6?text=${encodeURIComponent(item.name)}`;
+                const defaultImage = `https://images.unsplash.com/photo-1588508065123-287b28e013da?q=80&w=400&auto=format&fit=crop`;
                 const imageUrl = item.image ? item.image : defaultImage;
 
                 container.innerHTML += `
                     <div onclick="bookService(${item.id})" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-blue-200 transition-all duration-300 group flex flex-col cursor-pointer transform hover:-translate-y-1">
-                        
                         <div class="h-32 md:h-40 bg-gray-200 relative overflow-hidden border-b border-gray-100">
                             <img src="${imageUrl}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80 group-hover:opacity-50 transition-opacity"></div>
-                            
                             <div class="absolute bottom-3 left-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-blue-600 shadow-sm z-10">
                                 <i class="fa-solid ${item.icon} text-sm"></i>
                             </div>
-                            
                             <div class="absolute top-3 right-3 z-10">${hotBadge}</div>
                         </div>
-
                         <div class="p-4 md:p-5 flex-1 flex flex-col justify-between relative">
                             <div>
                                 <h3 class="text-sm md:text-base font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">${item.name}</h3>
                                 <div class="text-red-500 text-base md:text-lg font-black mt-1 md:mt-2">${item.price}</div>
                             </div>
                             <div class="w-full mt-3 bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white py-2 rounded-xl text-xs md:text-sm font-bold uppercase tracking-wide transition-all duration-300 flex justify-center items-center gap-2">
-                                Bấm Để Chọn <i class="fa-solid fa-arrow-right-long opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
+                                Đặt sửa ngay <i class="fa-solid fa-arrow-right-long opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                             </div>
                         </div>
                     </div>`;
@@ -465,24 +450,66 @@
         }
 
         function filterCategory(id) { currentCatId = id; currentSearch = ""; renderUI(); }
-        function handleSearch(query) { currentSearch = query; if(query !== "") currentCatId = null; renderUI(); }
+        function handleSearch(query) { currentSearch = query; renderUI(); }
 
         async function bookService(id) {
             if (!currentUser) return openAuthModal();
-            if (!globalLocation) { alert("Hệ thống bị mất địa chỉ. Vui lòng nhập lại!"); return startBookingFlow(); }
+            if (!globalLocation) { alert("Vui lòng nhập lại vị trí phòng!"); return startBookingFlow(); }
             try {
                 const res = await fetch(`${API_URL}/orders`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: currentUser.id, userName: currentUser.name, serviceId: id, location: globalLocation })
                 });
                 const data = await res.json();
-                if (data.success) { openPaymentModal(data.order); } else { alert("Lỗi: " + data.error); }
-            } catch (error) { alert("Lỗi tạo đơn. Đảm bảo Server Backend đang chạy!"); }
+                if (data.success) { 
+                    document.getElementById('inv-id').innerText = `MÃ ĐƠN: ${data.order.id}`;
+                    document.getElementById('payment-modal').classList.remove('hidden'); 
+                } else { alert("Lỗi: " + data.error); }
+            } catch (error) { alert("Lỗi tạo đơn. Hãy đảm bảo Server đang chạy!"); }
+        }
+
+        // --- HỆ THỐNG ĐÁNH GIÁ (SHOPEE STYLE) ---
+        function openReviewModal(orderId, serviceId, serviceName) {
+            document.getElementById('review-order-id').value = orderId;
+            document.getElementById('review-service-id').value = serviceId;
+            document.getElementById('review-service-name').innerText = serviceName;
+            document.getElementById('review-comment').value = '';
+            setRating(5); 
+            document.getElementById('review-modal').classList.remove('hidden');
+        }
+        function closeReviewModal() { document.getElementById('review-modal').classList.add('hidden'); }
+        
+        function setRating(stars) {
+            document.getElementById('rating-value').value = stars;
+            const btns = document.querySelectorAll('.star-btn');
+            btns.forEach((btn, idx) => {
+                if (idx < stars) btn.className = "star-btn text-3xl text-yellow-400";
+                else btn.className = "star-btn text-3xl text-gray-300";
+            });
+        }
+
+        async function submitReview() {
+            const orderId = document.getElementById('review-order-id').value;
+            const serviceId = document.getElementById('review-service-id').value;
+            const rating = document.getElementById('rating-value').value;
+            const comment = document.getElementById('review-comment').value.trim();
+
+            try {
+                const res = await fetch(`${API_URL}/reviews`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId, userId: currentUser.id, serviceId, rating, comment })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(data.message); closeReviewModal(); openHistoryModal();
+                } else { alert(data.error); }
+            } catch (e) { alert("Lỗi gửi dữ liệu đánh giá!"); }
         }
 
         // --- AUTH & MODALS LOGIC ---
         function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); document.body.classList.add('modal-active'); }
         function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
+        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); }
         function switchAuthTab(tab) {
             const isLogin = tab === 'login';
             document.getElementById('form-login').classList.toggle('hidden', !isLogin);
@@ -510,8 +537,7 @@
                 if(data.success) {
                     currentUser = { id: data.user.id, name: data.user.full_name, isTech: data.user.is_tech };
                     const btn = document.getElementById('login-btn');
-                    btn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">${currentUser.name}</span>`;
-                    btn.classList.replace('text-blue-600', 'text-red-500'); btn.classList.replace('border-blue-600', 'border-red-500'); btn.classList.replace('hover:bg-blue-50', 'hover:bg-red-50');
+                    btn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> <span>${currentUser.name}</span>`;
                     btn.onclick = logout; 
 
                     if(currentUser.isTech) {
@@ -526,11 +552,10 @@
         }
 
         function logout() {
-            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+            if (confirm("Bạn có chắc muốn đăng xuất không?")) {
                 currentUser = null; globalLocation = "";
                 const btn = document.getElementById('login-btn');
-                btn.innerHTML = `<i class="fa-solid fa-user"></i> <span class="hidden md:inline">Đăng nhập</span>`;
-                btn.classList.replace('text-red-500', 'text-blue-600'); btn.classList.replace('border-red-500', 'border-blue-600'); btn.classList.replace('hover:bg-red-50', 'hover:bg-blue-50');
+                btn.innerHTML = `<i class="fa-solid fa-user"></i> <span>Đăng nhập</span>`;
                 btn.onclick = openAuthModal;
                 const btnPc = document.getElementById('btn-tech-pc');
                 const btnMobile = document.getElementById('btn-tech-mobile');
@@ -539,26 +564,6 @@
                 returnToHome(); alert("Đã đăng xuất!");
             }
         }
-
-        function openPaymentModal(orderData) {
-            document.getElementById('payment-modal').classList.remove('hidden'); document.body.classList.add('modal-active');
-            const bankId = 'TCB'; const accountNo = '0123456789'; const accountName = 'NGUYEN VAN KHOI'; 
-            document.getElementById('inv-id').innerText = orderData.id;
-            document.getElementById('inv-total').innerText = orderData.price;
-            document.getElementById('inv-date').innerText = orderData.date;
-            document.getElementById('inv-service-name').innerText = orderData.serviceName;
-            document.getElementById('inv-location').innerText = orderData.location;
-            document.getElementById('inv-price').innerText = orderData.price;
-            document.getElementById('bank-name-display').innerText = `TECHCOMBANK`;
-            document.getElementById('account-no-display').innerText = accountNo;
-            document.getElementById('account-name-display').innerText = accountName;
-            const numericPrice = orderData.price.replace(/\D/g, '') || "0";
-            document.getElementById('amount-display').innerText = numericPrice + " VNĐ";
-            const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${numericPrice}&addInfo=${encodeURIComponent(orderData.id)}&accountName=${encodeURIComponent(accountName)}`;
-            document.getElementById('qr-image').src = qrUrl;
-        }
-
-        function closePaymentModal() { document.getElementById('payment-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
 
         async function openHistoryModal() {
             if (!currentUser) { alert("Bạn cần đăng nhập để xem lịch sử!"); openAuthModal(); return; }
@@ -573,20 +578,34 @@
                         container.innerHTML = `<div class="text-center text-gray-400 py-20"><i class="fa-solid fa-box-open text-6xl mb-4 text-gray-300"></i><p class="text-lg font-medium">Bạn chưa có đơn hàng nào</p></div>`; return;
                     }
                     container.innerHTML = data.orders.map(o => {
-                        return `<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex gap-4 items-center"><div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid ${o.icon || 'fa-wrench'}"></i></div><div class="flex-1"><div class="flex justify-between items-start"><h4 class="font-bold text-gray-800 leading-tight">${o.service_name}</h4><span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded tracking-wide">FIXIT${o.id}</span></div><p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${o.location}</p><div class="flex justify-between items-end mt-2"><span class="text-red-500 font-extrabold">${o.price}</span><span class="text-xs text-gray-400 font-medium">${new Date(o.created_at).toLocaleString('vi-VN')}</span></div></div></div>`;
+                        const reviewBtn = o.is_reviewed 
+                            ? `<span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-xl flex items-center gap-1"><i class="fa-solid fa-check"></i> Đã đánh giá</span>`
+                            : `<button onclick="closeHistoryModal(); openReviewModal(${o.id}, ${o.service_id}, '${o.service_name}')" class="text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 px-4 py-1.5 rounded-xl shadow-sm transition-colors">Viết đánh giá</button>`;
+                        
+                        return `
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex gap-4 items-center justify-between">
+                                <div class="flex gap-4 items-center">
+                                    <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl flex-shrink-0"><i class="fa-solid ${o.icon || 'fa-wrench'}"></i></div>
+                                    <div>
+                                        <div class="flex flex-col">
+                                            <h4 class="font-bold text-gray-800 leading-tight text-sm">${o.service_name}</h4>
+                                            <span class="text-[10px] font-bold text-blue-700 mt-0.5">MÃ ĐƠN: FIXIT${o.id}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ${o.location}</p>
+                                        <div class="flex gap-4 items-center mt-1">
+                                            <span class="text-red-500 font-extrabold text-sm">${o.price}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                ${reviewBtn}
+                            </div>`;
                     }).join('');
                 } else { container.innerHTML = `<div class="text-red-500 text-center py-10">Lỗi: ${data.error}</div>`; }
             } catch (error) { container.innerHTML = '<div class="text-red-500 text-center py-10">Lỗi kết nối Server!</div>'; }
         }
 
         function closeHistoryModal() { document.getElementById('history-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
-
-        function openTechModal() { 
-            if (!currentUser) { alert("Cần đăng nhập trước!"); openAuthModal(); return; }
-            document.getElementById('tech-modal').classList.remove('hidden'); document.body.classList.add('modal-active');
-            document.getElementById('tech-name').value = currentUser.name;
-        }
-
+        function openTechModal() { if (!currentUser) { alert("Cần đăng nhập trước!"); openAuthModal(); return; } document.getElementById('tech-modal').classList.remove('hidden'); document.body.classList.add('modal-active'); document.getElementById('tech-name').value = currentUser.name; }
         function closeTechModal() { document.getElementById('tech-modal').classList.add('hidden'); document.body.classList.remove('modal-active'); }
 
         async function submitTechRegistration() { 
@@ -604,7 +623,7 @@
                     body: JSON.stringify({ userId: currentUser.id, phone: phone, location: location, skills: skillsString })
                 });
                 const data = await res.json();
-                if (data.success) { alert("Đã gửi hồ sơ!"); closeTechModal(); } else { alert("Lỗi: " + data.error); }
+                if (data.success) { alert("Đã gửi hồ sơ làm thợ thành công!"); closeTechModal(); } else { alert("Lỗi: " + data.error); }
             } catch (err) { alert("Lỗi kết nối Server!"); }
         }
 
