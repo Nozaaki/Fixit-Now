@@ -34,11 +34,57 @@ app.get('/api/services', async (req, res) => {
     }
 });
 
-// 2. Tạo Đơn Hàng (Đã thêm tính năng báo về Telegram)
+// 2. Tạo Đơn Hàng
 app.post('/api/orders', async (req, res) => {
-    const { userId, serviceId, location, userName } = req.body;
+    const { userId, serviceId, location, userName, isConfirmation, rawOrderId, price } = req.body;
+    const teleToken = process.env.TELE_TOKEN; 
+    const chatId = process.env.TELE_CHAT_ID;
 
     try {
+        // ===================================================================
+        // NHÁNH 1: KHÁCH BẤM "TÔI ĐÃ CHUYỂN KHOẢN SUCCESS" -> SỬA TIN NHẮN CŨ TRÊN TELEGRAM LÊN TRẠNG THÁI MỚI
+        // ===================================================================
+        if (isConfirmation && rawOrderId) {
+            // Lấy thông tin đơn hàng và lấy cái telegram_message_id cũ ra để sửa
+            const orderRes = await pool.query(
+                'SELECT o.telegram_message_id, o.location, o.created_at, s.name as service_name FROM orders o JOIN services s ON o.service_id = s.id WHERE o.id = $1',
+                [rawOrderId]
+            );
+            
+            if (orderRes.rows.length > 0 && orderRes.rows[0].telegram_message_id) {
+                const orderData = orderRes.rows[0];
+                const orderDate = new Date(orderData.created_at).toLocaleString('vi-VN');
+
+                const updatedMessage = `
+✅ **KHÁCH ĐÃ CHUYỂN KHOẢN THÀNH CÔNG!**
+-----------------------------
+👤 **Khách hàng:** ${userName || 'Khách (Chưa có tên)'}
+🛠 **Dịch vụ:** ${orderData.service_name}
+📍 **Địa chỉ:** ${orderData.location}
+💰 **Số tiền:** ${price}
+⏰ **Thời gian:** ${orderDate}
+🆔 **Mã đơn:** FIXIT${rawOrderId}
+💳 **Trạng thái:** 🟢 ĐÃ NHẬN TIỀN (MB BANK)
+-----------------------------
+👉 *Khôi hãy nhanh chóng điều phối thợ đến sửa cho khách nhé!*
+                `;
+
+                // Gọi lệnh editMessageText của Telegram để ghi đè lên nội dung cũ
+                if (teleToken !== 'YOUR_BOT_TOKEN_HERE' && chatId !== 'YOUR_CHAT_ID_HERE') {
+                    await axios.post(`https://api.telegram.org/bot${teleToken}/editMessageText`, {
+                        chat_id: chatId,
+                        message_id: orderData.telegram_message_id,
+                        text: updatedMessage,
+                        parse_mode: 'Markdown'
+                    }).catch(err => console.error("Lỗi sửa Telegram:", err.message));
+                }
+            }
+            return res.json({ success: true, message: "Đã cập nhật trạng thái đơn lên Telegram!" });
+        }
+
+        // ===================================================================
+        // NHÁNH 2: LUỒNG TẠO ĐƠN HÀNG MỚI (KHI KHÁCH ĐẶT THỢ)
+        // ===================================================================
         const orderResult = await pool.query(
             'INSERT INTO orders (user_id, service_id, location) VALUES ($1, $2, $3) RETURNING id, created_at',
             [userId, serviceId, location]
@@ -49,15 +95,7 @@ app.post('/api/orders', async (req, res) => {
         const service = serviceResult.rows[0];
 
         const orderDate = new Date(newOrder.created_at || new Date()).toLocaleString('vi-VN');
-
-        // ==========================================
-        // CẤU HÌNH THÔNG BÁO TELEGRAM CỦA KHÔI
-        // ==========================================
-        // Đọc cấu hình bảo mật từ biến môi trường của Render
-        const teleToken = process.env.TELE_TOKEN; 
-        const chatId = process.env.TELE_CHAT_ID;
         
-        // Nội dung tin nhắn
         const teleMessage = `
 🚨 **CÓ ĐƠN HÀNG MỚI!**
 -----------------------------
@@ -67,39 +105,37 @@ app.post('/api/orders', async (req, res) => {
 💰 **Giá dự kiến:** ${service.price}
 ⏰ **Thời gian:** ${orderDate}
 🆔 **Mã đơn:** FIXIT${newOrder.id}
+💳 **Trạng thái:** ⏳ Chờ khách chuyển khoản...
 -----------------------------
-👉 *Khôi hãy check đơn và điều phối thợ nhé!*
+👉 *Khôi hãy đợi khách chuyển khoản nhé!*
         `;
 
-        // Lệnh gửi tin nhắn qua Telegram API (chạy ngầm, không ảnh hưởng đến tốc độ của app)
+        // Gửi tin nhắn mới và lưu message_id vào DB để nhánh 1 có cái mà sửa
         if (teleToken !== 'YOUR_BOT_TOKEN_HERE' && chatId !== 'YOUR_CHAT_ID_HERE') {
-            axios.post(`https://api.telegram.org/bot${teleToken}/sendMessage`, {
-                chat_id: chatId,
-                text: teleMessage,
-                parse_mode: 'Markdown'
-            }).catch(err => console.error("Lỗi gửi Telegram:", err.message));
+            try {
+                const teleRes = await axios.post(`https://api.telegram.org/bot${teleToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: teleMessage,
+                    parse_mode: 'Markdown'
+                });
+                const msgId = teleRes.data.result.message_id;
+                await pool.query('UPDATE orders SET telegram_message_id = $1 WHERE id = $2', [msgId, newOrder.id]);
+            } catch (teleErr) { console.error("Lỗi Telegram:", teleErr.message); }
         }
 
-        // ==========================================
-        // TỰ ĐỘNG XỬ LÝ & TẠO LINK MÃ VIETQR ĐỘNG
-        // ==========================================
-        // Chuyển đổi giá từ chuỗi (VD: "100.000đ") thành số nguyên (VD: 100000) để truyền vào QR
         const rawPrice = parseInt(service.price.replace(/[^0-9]/g, '')) || 100000;
-        
-        // Thông tin cấu hình tài khoản ngân hàng MB của Khôi
-        const BANK_BIN = "970422";          // Mã định danh ngân hàng MB Bank
-        const BANK_ACCOUNT = "0123456789";  // STK nhận tiền thật của Khôi (bạn đổi lại cho đúng nhé)
-        const ACCOUNT_NAME = "NGUYEN VAN KHOI"; // Tên tài khoản viết hoa không dấu
-        const ORDER_CODE = `FIXIT${newOrder.id}`; // Nội dung chuyển khoản chuẩn theo mã đơn
+        const BANK_BIN = "970422";          
+        const BANK_ACCOUNT = "0123456789";  
+        const ACCOUNT_NAME = "NGUYEN VAN KHOI"; 
+        const ORDER_CODE = `FIXIT${newOrder.id}`; 
 
-        // Tự động sinh link ảnh QR động theo chuẩn VietQR quét phát tự điền tiền + nội dung đơn
         const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${BANK_ACCOUNT}-compact2.png?amount=${rawPrice}&addInfo=${ORDER_CODE}&accountName=${ACCOUNT_NAME}`;
 
-        // Trả toàn bộ dữ liệu này về cho file index.html hiển thị lên Modal hóa đơn
         res.json({ 
             success: true, 
             order: {
                 id: ORDER_CODE, 
+                rawId: newOrder.id,
                 serviceName: service.name,
                 price: service.price,
                 numericPrice: rawPrice,
@@ -112,9 +148,7 @@ app.post('/api/orders', async (req, res) => {
             }
         });
 
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 // 3. API Đăng ký tài khoản
 app.post('/api/register', async (req, res) => {

@@ -390,7 +390,7 @@
                 Vui lòng thanh toán vào số tài khoản bên trên. Yêu cầu copy chính xác số tiền và nội dung chuyển khoản đối với loại chuyển khoản. Hệ thống sẽ hủy giao dịch nếu không nhận được thanh toán trong vòng 24 giờ.
             </p>
 
-            <button onclick="closePaymentModal(); returnToHome();" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg transition-all text-sm md:text-base tracking-wide uppercase">
+            <button onclick="handlePaymentConfirmation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg transition-all text-sm md:text-base tracking-wide uppercase">
                 Tôi đã chuyển khoản thành công
             </button>
         </div>
@@ -824,7 +824,34 @@
                 if (data.success) { alert("Đã gửi hồ sơ làm thợ thành công!"); closeTechModal(); } else { alert("Lỗi: " + data.error); }
             } catch (err) { alert("Lỗi kết nối Server!"); }
         }
+        // Xác nhận đã chuyển khoản thành công - Gọi API duy nhất để Server biết cần sửa tin nhắn cũ và ghi nhận thanh toán, sau đó đóng modal và quay về trang chủ
+        async function handlePaymentConfirmation() {
+            const orderId = document.getElementById('bill-id').innerText;
+            const rawOrderId = orderId.replace('FIXIT', ''); // Tách chữ FIXIT để lấy số nguyên gốc (VD: 5)
+            const price = document.getElementById('bill-price').innerText;
+            const userName = currentUser ? currentUser.name : "Khách";
 
+            try {
+                // Gọi vào API duy nhất /api/orders kèm cờ hiệu để Server biết cần sửa tin nhắn cũ
+                await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        isConfirmation: true, 
+                        rawOrderId: rawOrderId, 
+                        userName: userName, 
+                        price: price 
+                    })
+                });
+            } catch (e) { 
+                console.error("Lỗi gửi báo cáo chuyển khoản:", e); 
+            }
+
+            // Thực hiện đóng modal và quay về trang chủ
+            closePaymentModal();
+            returnToHome();
+            alert("Hệ thống đã ghi nhận thông báo chuyển khoản của bạn!");
+        }
         // Thêm hàm bổ trợ click copy thông tin
         function copyText(elementId) {
             const text = document.getElementById(elementId).innerText;
