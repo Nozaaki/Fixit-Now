@@ -139,9 +139,18 @@ app.get('/api/orders/history/:userId', async (req, res) => {
     const userId = req.params.userId;
     try {
         const result = await pool.query(`
-            SELECT o.id, o.location, o.created_at, s.name as service_name, s.price, s.icon
+            SELECT 
+                o.id, 
+                o.location, 
+                o.created_at, 
+                s.name as service_name, 
+                s.price, 
+                s.icon,
+                -- Kiểm tra xem đơn hàng này đã tồn tại trong bảng reviews chưa, nếu có thì trả về true, ngược lại false
+                CASE WHEN r.id IS NOT NULL THEN TRUE ELSE FALSE END as is_reviewed
             FROM orders o
             JOIN services s ON o.service_id = s.id
+            LEFT JOIN reviews r ON o.id = r.order_id
             WHERE o.user_id = $1
             ORDER BY o.created_at DESC
         `, [userId]);

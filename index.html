@@ -455,17 +455,89 @@
         async function bookService(id) {
             if (!currentUser) return openAuthModal();
             if (!globalLocation) { alert("Vui lòng nhập lại vị trí phòng!"); return startBookingFlow(); }
+            
+            const service = services.find(s => s.id === id);
+            if (!service) return;
+
+            // 1. Tạo một cái Pop-up xem chi tiết dịch vụ và danh sách đánh giá
+            const detailModal = document.createElement('div');
+            detailModal.id = 'service-detail-modal';
+            detailModal.className = 'fixed inset-0 bg-black/60 z-[100] flex items-center justify-center px-4 backdrop-blur-sm';
+            
+            // 2. Gọi API lấy danh sách đánh giá của dịch vụ này từ Server Render
+            let reviewsHTML = '<p class="text-gray-400 text-sm italic">Chưa có đánh giá nào cho dịch vụ này.</p>';
             try {
-                const res = await fetch(`${API_URL}/orders`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: currentUser.id, userName: currentUser.name, serviceId: id, location: globalLocation })
-                });
-                const data = await res.json();
-                if (data.success) { 
-                    document.getElementById('inv-id').innerText = `MÃ ĐƠN: ${data.order.id}`;
-                    document.getElementById('payment-modal').classList.remove('hidden'); 
-                } else { alert("Lỗi: " + data.error); }
-            } catch (error) { alert("Lỗi tạo đơn. Hãy đảm bảo Server đang chạy!"); }
+                const resReview = await fetch(`${API_URL}/reviews/${id}`);
+                const dataReview = await resReview.json();
+                if (dataReview.success && dataReview.reviews.length > 0) {
+                    reviewsHTML = dataReview.reviews.map(r => {
+                        let stars = '';
+                        for(let i=1; i<=5; i++) {
+                            stars += `<i class="fa-solid fa-star text-xs ${i <= r.rating ? 'text-yellow-400' : 'text-gray-200'}"></i>`;
+                        }
+                        return `
+                            <div class="border-b pb-2.5 mb-2.5 last:border-0 last:pb-0 last:mb-0">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-gray-700 text-sm">${r.full_name}</span>
+                                    <span class="text-[10px] text-gray-400">${new Date(r.created_at).toLocaleDateString('vi-VN')}</span>
+                                </div>
+                                <div class="mb-1">${stars}</div>
+                                <p class="text-xs text-gray-600">${r.comment || 'Người dùng không để lại bình luận.'}</p>
+                            </div>`;
+                    }).join('');
+                }
+            } catch (e) { console.error("Lỗi tải đánh giá:", e); }
+
+            // 3. Dựng giao diện Pop-up
+            detailModal.innerHTML = `
+                <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative max-h-[85vh] flex flex-col">
+                    <button onclick="document.getElementById('service-detail-modal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl leading-none">&times;</button>
+                    
+                    <div class="border-b pb-4 flex gap-4 items-center flex-shrink-0">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl"><i class="fa-solid ${service.icon}"></i></div>
+                        <div>
+                            <h3 class="font-black text-gray-900 text-base md:text-lg">${service.name}</h3>
+                            <p class="text-red-500 font-black text-base mt-0.5">${service.price}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto my-4 pr-1 no-scrollbar">
+                        <h4 class="font-bold text-gray-800 text-sm mb-3 flex items-center gap-1.5 border-b pb-1">
+                            <i class="fa-solid fa-comments text-blue-500"></i> Đánh giá từ sinh viên (${service.name})
+                        </h4>
+                        <div class="space-y-3 bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                            ${reviewsHTML}
+                        </div>
+                    </div>
+
+                    <button id="confirm-order-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md uppercase tracking-wider text-sm flex-shrink-0">
+                        Xác nhận đặt thợ qua vị trí: ${globalLocation}
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(detailModal);
+
+            // 4. Lập trình sự kiện click nút Xác nhận đặt thợ bên trong Pop-up
+            document.getElementById('confirm-order-btn').onclick = async () => {
+                const btn = document.getElementById('confirm-order-btn');
+                btn.innerText = "Đang xử lý đơn hàng...";
+                btn.disabled = true;
+                
+                try {
+                    const res = await fetch(`${API_URL}/orders`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUser.id, userName: currentUser.name, serviceId: id, location: globalLocation })
+                    });
+                    const data = await res.json();
+                    detailModal.remove(); // Đóng popup chi tiết
+                    
+                    if (data.success) { 
+                        document.getElementById('inv-id').innerText = `MÃ ĐƠN: ${data.order.id}`;
+                        document.getElementById('payment-modal').classList.remove('hidden'); 
+                    } else { alert("Lỗi: " + data.error); }
+                } catch (error) { alert("Lỗi tạo đơn. Hãy đảm bảo Server đang chạy!"); btn.innerText = "Xác nhận đặt thợ"; btn.disabled = false; }
+            };
         }
 
         // --- HỆ THỐNG ĐÁNH GIÁ (SHOPEE STYLE) ---
