@@ -159,12 +159,12 @@ app.get('/api/orders/history/:userId', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 o.id, 
+                o.service_id, -- Thêm service_id để dễ dàng liên kết với đánh giá sau này
                 o.location, 
                 o.created_at, 
                 s.name as service_name, 
                 s.price, 
                 s.icon,
-                -- Kiểm tra xem đơn hàng này đã tồn tại trong bảng reviews chưa, nếu có thì trả về true, ngược lại false
                 CASE WHEN r.id IS NOT NULL THEN TRUE ELSE FALSE END as is_reviewed
             FROM orders o
             JOIN services s ON o.service_id = s.id
