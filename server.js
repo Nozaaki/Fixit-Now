@@ -8,12 +8,20 @@ app.use(cors());
 app.use(express.json());
 
 // Kết nối PostgreSQL 
+// const pool = new Pool({
+//     user: 'postgres',
+//     host: 'localhost',
+//     database: 'Fixit Now',
+//     password: '230704',
+//     port: 5432,
+// });
+
+// Cấu hình kết nối PostgreSQL cho môi trường Cloud (Render/Heroku/Railway)
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'Fixit Now',
-    password: '230704',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL, // Render/Heroku/Railway sẽ cung cấp biến môi trường này
+    ssl: {
+        rejectUnauthorized: false // Cấu hình SSL cho PostgreSQL trên Cloud
+    }
 });
 
 // 1. Lấy danh sách dịch vụ
@@ -45,8 +53,9 @@ app.post('/api/orders', async (req, res) => {
         // ==========================================
         // CẤU HÌNH THÔNG BÁO TELEGRAM CỦA KHÔI
         // ==========================================
-        const teleToken = '8716729980:AAGFlCDvXlfj6fimgf4JBlaS-I7cqOqlufQ'; // Điền Token của Bot vào đây
-        const chatId = '6421326023';     // Điền Chat ID của bạn vào đây
+        // Đọc cấu hình bảo mật từ biến môi trường của Render
+        const teleToken = process.env.TELE_TOKEN; 
+        const chatId = process.env.TELE_CHAT_ID;
         
         // Nội dung tin nhắn
         const teleMessage = `
