@@ -293,12 +293,107 @@
     </div>
 
     <!-- MODAL THANH TOÁN THÀNH CÔNG -->
-    <div id="payment-modal" class="hidden fixed inset-0 bg-white z-[80] p-6 max-w-md mx-auto rounded-xl shadow-lg flex flex-col justify-center items-center text-center">
-        <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl mb-4"><i class="fa-solid fa-circle-check"></i></div>
-        <h2 class="text-xl font-bold text-green-600 mb-2">Đặt thợ thành công!</h2>
-        <p class="text-sm text-gray-500 mb-4">Hệ thống đang điều phối kỹ thuật viên công nghệ qua vị trí của bạn.</p>
-        <p class="text-xs bg-gray-100 p-2 rounded mb-6 font-mono font-bold text-gray-700" id="inv-id"></p>
-        <button onclick="closePaymentModal(); returnToHome();" class="bg-blue-600 text-white px-10 py-2.5 rounded-xl font-bold w-full">Xong</button>
+    <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 z-[120] flex items-center justify-center px-4 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white rounded-2xl w-full max-w-2xl p-6 my-8 shadow-2xl relative flex flex-col">
+            <button onclick="closePaymentModal(); returnToHome();" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl leading-none">&times;</button>
+            
+            <h2 class="text-xl font-black text-gray-900 border-b-2 border-blue-600 pb-2 uppercase tracking-wide flex items-center gap-2">
+                <i class="fa-solid fa-file-invoice-dollar text-blue-600"></i> Đơn hàng
+            </h2>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 my-4 text-xs">
+                <div>
+                    <p class="text-gray-400 font-bold uppercase mb-0.5">Mã đơn #:</p>
+                    <p id="bill-id" class="font-black text-gray-800"></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 font-bold uppercase mb-0.5">Số tiền:</p>
+                    <p id="bill-price" class="font-black text-gray-800"></p>
+                </div>
+                <div>
+                    <p class="text-gray-400 font-bold uppercase mb-0.5">TT Hóa đơn:</p>
+                    <span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-bold">Chưa thanh toán</span>
+                </div>
+                <div>
+                    <p class="text-gray-400 font-bold uppercase mb-0.5">Ngày tạo:</p>
+                    <p id="bill-date" class="font-medium text-gray-600"></p>
+                </div>
+            </div>
+
+            <div class="table-container border border-gray-200 rounded-xl mb-4 text-xs md:text-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 font-bold border-b border-gray-200">
+                            <th class="p-3">Tên dịch vụ</th>
+                            <th class="p-3 border-l">Địa chỉ / Ghi chú</th>
+                            <th class="p-3 border-l">Yêu cầu thu</th>
+                            <th class="p-3 border-l text-center">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b last:border-0 text-gray-700 font-semibold">
+                            <td id="bill-service-name" class="p-3"></td>
+                            <td id="bill-location" class="p-3 border-l"></td>
+                            <td id="bill-req-price" class="p-3 border-l text-gray-800"></td>
+                            <td class="p-3 border-l text-center">
+                                <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-[11px] font-bold">Chờ</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="text-[10px] md:text-xs text-gray-400 italic mb-6">
+                * Đơn hàng có thể bị chậm ít phút do thợ xếp hàng lần lượt, quý khách vui lòng nhẫn nại. Toàn bộ quá trình tiếp nhận được xử lý 24/24.
+            </p>
+
+            <h3 class="text-sm font-black text-blue-900 uppercase border-b pb-1 mb-4 flex items-center gap-1">
+                <i class="fa-solid fa-credit-card"></i> Thông tin thanh toán
+            </h3>
+
+            <div class="flex flex-col md:flex-row gap-6 items-center border-b pb-6 mb-4">
+                <div class="w-full md:w-3/5 border border-gray-200 rounded-xl overflow-hidden text-xs md:text-sm">
+                    <div class="flex border-b"><div class="w-1/3 bg-blue-50 p-3 font-bold text-gray-700 border-r">Ngân hàng</div><div id="bank-name" class="w-2/3 p-3 font-black text-gray-900 uppercase"></div></div>
+                    <div class="flex border-b">
+                        <div class="w-1/3 bg-blue-50 p-3 font-bold text-gray-700 border-r">Số tài khoản:</div>
+                        <div class="w-2/3 p-3 font-mono font-bold text-gray-900 flex justify-between items-center">
+                            <span id="bank-acc"></span>
+                            <button onclick="copyText('bank-acc')" class="text-blue-600 hover:text-blue-800 ml-2"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex border-b"><div class="w-1/3 bg-blue-50 p-3 font-bold text-gray-700 border-r">Tên tài khoản:</div><div id="bank-user" class="w-2/3 p-3 font-black text-gray-900"></div></div>
+                    <div class="flex border-b">
+                        <div class="w-1/3 bg-blue-50 p-3 font-bold text-gray-700 border-r">Số tiền:</div>
+                        <div class="w-2/3 p-3 font-black text-red-600 flex justify-between items-center">
+                            <span id="bank-amount"></span>
+                            <button onclick="copyText('bank-amount-raw')" class="text-blue-600 hover:text-blue-800 ml-2"><i class="fa-regular fa-copy"></i></button>
+                            <span id="bank-amount-raw" class="hidden"></span>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-1/3 bg-blue-50 p-3 font-bold text-gray-700 border-r">Nội dung chuyển khoản:</div>
+                        <div class="w-2/3 p-3 font-mono font-black text-blue-700 flex justify-between items-center bg-yellow-50">
+                            <span id="bank-content"></span>
+                            <button onclick="copyText('bank-content')" class="text-blue-600 hover:text-blue-800 ml-2"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/5 flex justify-center">
+                    <div class="border-2 border-gray-100 p-4 rounded-2xl bg-white shadow-md max-w-[220px] text-center">
+                        <img id="bill-qr-img" src="" alt="Mã VietQR Thanh Toán" class="w-full h-auto rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-xs text-red-600 font-medium text-center bg-red-50 p-3 rounded-xl border border-red-100 mb-6 leading-relaxed">
+                Vui lòng thanh toán vào số tài khoản bên trên. Yêu cầu copy chính xác số tiền và nội dung chuyển khoản đối với loại chuyển khoản. Hệ thống sẽ hủy giao dịch nếu không nhận được thanh toán trong vòng 24 giờ.
+            </p>
+
+            <button onclick="closePaymentModal(); returnToHome();" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl shadow-lg transition-all text-sm md:text-base tracking-wide uppercase">
+                Tôi đã chuyển khoản thành công
+            </button>
+        </div>
     </div>
 
     <!-- MODAL LỊCH SỬ ĐƠN HÀNG -->
@@ -526,17 +621,48 @@
                 
                 try {
                     const res = await fetch(`${API_URL}/orders`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: currentUser.id, userName: currentUser.name, serviceId: id, location: globalLocation })
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            userId: currentUser.id, 
+                            userName: currentUser.name, 
+                            serviceId: id, 
+                            location: globalLocation 
+                        })
                     });
                     const data = await res.json();
-                    detailModal.remove(); // Đóng popup chi tiết
+                    detailModal.remove(); // Đóng popup chi tiết dịch vụ
                     
                     if (data.success) { 
-                        document.getElementById('inv-id').innerText = `MÃ ĐƠN: ${data.order.id}`;
+                        // Đổ dữ liệu từ Backend trả về lên giao diện Modal hóa đơn chi tiết
+                        document.getElementById('bill-id').innerText = data.order.id;
+                        document.getElementById('bill-price').innerText = data.order.price;
+                        document.getElementById('bill-date').innerText = data.order.date;
+                        
+                        document.getElementById('bill-service-name').innerText = data.order.serviceName;
+                        document.getElementById('bill-location').innerText = data.order.location;
+                        document.getElementById('bill-req-price').innerText = data.order.price;
+                        
+                        document.getElementById('bank-name').innerText = data.order.bankName;
+                        document.getElementById('bank-acc').innerText = data.order.bankAccount;
+                        document.getElementById('bank-user').innerText = data.order.accountName;
+                        document.getElementById('bank-amount').innerText = `${data.order.numericPrice.toLocaleString('vi-VN')} VNĐ`;
+                        document.getElementById('bank-amount-raw').innerText = data.order.numericPrice;
+                        document.getElementById('bank-content').innerText = data.order.id;
+                        
+                        // Cập nhật link ảnh QR Code động
+                        document.getElementById('bill-qr-img').src = data.order.qrUrl;
+
+                        // Mở bung cái màn hình hóa đơn VietQR lên
                         document.getElementById('payment-modal').classList.remove('hidden'); 
-                    } else { alert("Lỗi: " + data.error); }
-                } catch (error) { alert("Lỗi tạo đơn. Hãy đảm bảo Server đang chạy!"); btn.innerText = "Xác nhận đặt thợ"; btn.disabled = false; }
+                    } else { 
+                        alert("Lỗi: " + data.error); 
+                    }
+                } catch (error) { 
+                    alert("Lỗi tạo đơn. Hãy đảm bảo Server đang chạy!"); 
+                    btn.innerText = "Xác nhận đặt thợ"; 
+                    btn.disabled = false; 
+                }
             };
         }
 
@@ -697,6 +823,14 @@
                 const data = await res.json();
                 if (data.success) { alert("Đã gửi hồ sơ làm thợ thành công!"); closeTechModal(); } else { alert("Lỗi: " + data.error); }
             } catch (err) { alert("Lỗi kết nối Server!"); }
+        }
+
+        // Thêm hàm bổ trợ click copy thông tin
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Đã copy thành công: " + text);
+            }).catch(err => console.error("Không thể copy:", err));
         }
 
         window.onload = fetchServicesFromDB;

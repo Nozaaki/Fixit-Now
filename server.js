@@ -79,17 +79,36 @@ app.post('/api/orders', async (req, res) => {
                 parse_mode: 'Markdown'
             }).catch(err => console.error("Lỗi gửi Telegram:", err.message));
         }
-        // ==========================================
 
+        // ==========================================
+        // TỰ ĐỘNG XỬ LÝ & TẠO LINK MÃ VIETQR ĐỘNG
+        // ==========================================
+        // Chuyển đổi giá từ chuỗi (VD: "100.000đ") thành số nguyên (VD: 100000) để truyền vào QR
+        const rawPrice = parseInt(service.price.replace(/[^0-9]/g, '')) || 100000;
+        
+        // Thông tin cấu hình tài khoản ngân hàng MB của Khôi
+        const BANK_BIN = "970422";          // Mã định danh ngân hàng MB Bank
+        const BANK_ACCOUNT = "0123456789";  // STK nhận tiền thật của Khôi (bạn đổi lại cho đúng nhé)
+        const ACCOUNT_NAME = "NGUYEN VAN KHOI"; // Tên tài khoản viết hoa không dấu
+        const ORDER_CODE = `FIXIT${newOrder.id}`; // Nội dung chuyển khoản chuẩn theo mã đơn
+
+        // Tự động sinh link ảnh QR động theo chuẩn VietQR quét phát tự điền tiền + nội dung đơn
+        const qrUrl = `https://img.vietqr.io/image/${BANK_BIN}-${BANK_ACCOUNT}-compact2.png?amount=${rawPrice}&addInfo=${ORDER_CODE}&accountName=${ACCOUNT_NAME}`;
+
+        // Trả toàn bộ dữ liệu này về cho file index.html hiển thị lên Modal hóa đơn
         res.json({ 
             success: true, 
             order: {
-                id: `FIXIT${newOrder.id}FPT`, 
-                rawId: newOrder.id,
+                id: ORDER_CODE, 
                 serviceName: service.name,
                 price: service.price,
+                numericPrice: rawPrice,
                 location: location,
-                date: orderDate
+                date: orderDate,
+                qrUrl: qrUrl,
+                bankName: "NGÂN HÀNG TMCP (MB)",
+                bankAccount: BANK_ACCOUNT,
+                accountName: ACCOUNT_NAME
             }
         });
 
@@ -97,7 +116,6 @@ app.post('/api/orders', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
 // 3. API Đăng ký tài khoản
 app.post('/api/register', async (req, res) => {
     const { phone, fullName, password } = req.body;
